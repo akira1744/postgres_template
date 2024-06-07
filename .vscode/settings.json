@@ -1,0 +1,4 @@
+{
+    "vscode-postgres.defaultConnection": "localhost:15432",
+    "vscode-postgres.defaultDatabase": "sampledb"
+}

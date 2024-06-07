@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  postgres: 
+    hostname: ${HOST_NAME} 
+    container_name: ${CONTAINER_NAME} 
+    build: 
+      context: ./docker/postgres
+    ports:
+      - "${HOST_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${USER_NAME}
+      POSTGRES_PASSWORD : ${USER_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - workspace:/home/postgres/workspace
+    user: ${USER_NAME}
+    restart: always
+    networks:
+      - pgnetwork
+
+volumes:
+  # postgresコンテナのデータ永続化用のデータボリューム（同名がなければ自動生成される）
+  pgdata: 
+    name: ${DB_VOLUME_NAME}
+    driver: local
+  workspace:
+    name: ${WORKSPACE_VOLUME_NAME}
+    driver: local
+
+# ネットワーク定義
+networks:
+  # docker-composeで勝手にデフォルトネットワークが生成される予防。（自動で全コンテナが所属するbridgeを指定）
+  default:
+    external: true
+    name: bridge
+  # コンテナ間通信用のネットワークセグメント
+  pgnetwork: 
+    # これが作成されるネットワーク名（同名がなければ自動生成される）
+    name: ${NETWORK_NAME}
+
+
